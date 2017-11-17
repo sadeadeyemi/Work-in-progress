@@ -1,0 +1,29 @@
+.background    { background: rgb(52, 166, 251);
+                 table-layout: fixed;
+                 border-spacing: 0;
+				 height: 100%;
+				 width: 100%;
+}
+.background td { padding: 25;          }
+.lava          { background: rgb(237, 31, 0); }
+.wall          { background: white;   }
+.coin		   { background: rgb(0, 0, 0); }
+.horiPlat	   { background: rgb(158, 25, 145);  }
+.vertPlat      { background: rgb(100, 69, 25); }
+.enemy         { background: rgb(54, 125, 89); }
+.spikes        { background: rgb(78, 225, 54); }
+
+.actor	{position: absolute; }
+.player	{background: rgb(2, 181, 0); }
+.game {
+	overflow: hidden;
+	max-width: 600px;
+	max-height: 600px;
+	
+	
+  position: relative;
+}
+
+.gameOver .player {
+  background: rgb(0, 0, 24);
+}
