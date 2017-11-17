@@ -425,17 +425,23 @@ Player.prototype.moveY = function(step, level, keys) {
   var motion = new Vector(0, this.speed.y * step);
   var newPos = this.pos.plus(motion);
   var obstacle = level.obstacleAt(newPos, this.size);
+  var otherActor = level.actorAt(this);
+  if (otherActor && otherActor.type === "horiPlat") {
+    obstacle = otherActor;
+  }
   // The floor is also an obstacle -- only allow players to 
   // jump if they are touching some obstacle.
   if (obstacle) {
 	  level.playerHit(obstacle);
-    if (keys.up && this.speed.y > 0)
+    if (keys.up )
       this.speed.y = -jumpSpeed;
     else
       this.speed.y = 0;
-  } else {
-    this.pos = newPos;
+    motion = new Vector(0, this.speed.y * step);
+    newPos = this.pos.plus(motion);
   }
+  
+  this.pos = newPos;
 };
 
 Player.prototype.act = function(step, level, keys) {
