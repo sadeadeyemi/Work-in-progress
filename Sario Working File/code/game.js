@@ -3,7 +3,7 @@ var actorChars = {
 	  /*">": HoriPlat,
 	  "^": VertPlat,*/
 	  "?": Enemy,
-	  "x": Spikes
+	  //"x": Spikes
 	  
   };
 function Level(plan) {
@@ -40,8 +40,10 @@ function Level(plan) {
 		  this.actors.push(new HoriPlat(new Vector(x,y)));
 	  } else if (ch == "^") {	  
 		  this.actors.push(new VertPlat(new Vector(x,y)));
-	  }else if (ch == "?") {  
+	  } else if (ch == "?") {  
 		  this.actors.push(new Enemy(new Vector(x,y)));
+	  } else if (ch == "x") {
+		 fieldType = "spikes"
 	  }
       // "Push" the fieldType, which is a string, onto the gridLine array (at the end).
       gridLine.push(fieldType);
@@ -75,24 +77,17 @@ Vector.prototype.times = function(factor) {
 
 // A Player has a size, speed and position.
 function Player(pos) {
-  this.pos = pos.plus(new Vector(0, -0.5));
-  this.size = new Vector(0.8, 1.5);
+  this.pos = pos.plus(new Vector(0, -2.5));
+  this.size = new Vector(1.6, 3);
   this.speed = new Vector(0, 0);
   
- /* window.onload = function() {
-	var canvas =
-	document.getElementById("marioPic");
-	//var ctx = canvas.getContext("2d");
-	var img = document.getElementById("marioPic");
-	//ctx.drawImage(img, 0,0);
-};*/
 }
 Player.prototype.type = "player";
 
 //lava 
 function Lava (pos) {
 	this.pos = pos;
-	this.size = new Vector(3, 5);
+	this.size = new Vector(1, 1.8);
 }
 Lava.prototype.type= "lava";
 
@@ -122,18 +117,12 @@ Coin.prototype.act = function(step) {
 var jiggleSpeed = 6.9, jiggleDist = .42
 
 
-function Wall(pos, ch) {
-	this.pos = pos;
-	if (ch == ">") {
-		this.speed = new Vector (2,0);
-	}
-}
 //horizontal platform
 function HoriPlat(pos) {
 	this.pos = pos;
 	this.size = new Vector (5,1);
 	this.speed = new Vector (2,0);
-	//this.basePos = this.pos=pos.plus(new Vector(.1,2));
+	
 	
 HoriPlat.prototype.type = "horiPlat";
 
@@ -148,70 +137,72 @@ HoriPlat.prototype.act = function(step, level) {
 		this.speed = this.speed.times(-1);
 	}
 	var horizontalPos = newPos * horizontalDist;
-}
-/*HoriPlat.prototype.obstacleAt = function(pos, size) {
-  var xStart = Math.bottom(pos.x);
-  var xEnd = Math.roof(pos.x + size.x);
-  var yStart = Math.bottom(pos.y);
-  var yEnd = Math.roof(pos.y + size.y);
-
-  if (xStart < 0 || xEnd > this.width || yStart < 0)
-    return "wall";
-  for (var y = yStart; y < yEnd; y++) {
-    for (var x = xStart; x < xEnd; x++) {
-      var fieldType = this.grid[y][x];
-      if (fieldType) return fieldType;
-    }
   }
-};*/
-
-
 };
 var horizontalSpeed =4, horizontalDist = 1
 
-
-
 //vertical platform
 function VertPlat (pos) {
-	this.basePos = this.pos = pos.plus(new Vector(.3, .2));
+	this.pos = pos;
 	this.size = new Vector(5,1);
-	this.vertical = Math.random() * Math.PI * 2;
-	this.repeatPos = pos;
-}
+	this.speed = new Vector (0,2);
+
 VertPlat.prototype.type = "vertPlat";
 
-VertPlat.prototype.act = function(step) {
-	this.vertical += step * verticalSpeed;
-	var verticalPos = Math.sin(this.vertical) * verticalDist;
-	this.pos = this.basePos.plus(new Vector(0, verticalPos));
-
+VertPlat.prototype.act = function(step, level) {
+	var newPos = this.pos.plus(this.speed.times(step));
+	if (!level.obstacleAt(newPos, this.size)){
+		this.pos = newPos;
+	}else if (this.repeatPos) {
+		this.pos = this.repeatPos;
+	}else {
+		this.speed = this.speed.times(-1);
+	}
+	var verticalPos = newPos * verticalDist;
+  }
 	
 };
-var verticalSpeed =6.9, verticalDist = -.63
+var verticalSpeed =4, verticalDist = -1
 
 //enemy function	
 function Enemy (pos) {
-	this.basePos = this.pos = pos.plus(new Vector(.3, .2));
-	this.size = new Vector (3,1);
-	this.enemy = Math.random() * Math.PI * 2;
-	this.repeatPos = pos;
+	this.pos = pos;
+	this.size = new Vector (1,1);
+	this.speed = new Vector (2,0);
 }
 Enemy.prototype.type = "enemy";
 
-Enemy.prototype.act = function(step) {
-	this.enemy += step * enemySpeed;
-	var enemyPos = Math.sin(this.enemy) * enemyDist;
-	this.pos = this.basePos.plus(new Vector(0, enemyPos));
+Enemy.prototype.act = function(step, level) {
+	var newPos = this.pos.plus(this.speed.times(step));
+	if (!level.obstacleAt(newPos, this.size)){
+		this.pos = newPos;
+	}else if (enemyDist <= 3.5) {
+		this.pos = this.repeatPos;
+	}else {
+		this.speed = this.speed.times(-1);
+	}
+	var enemyPos = newPos * enemyDist;
 };
-var enemySpeed =6.9, enemyDist = -.63
+var enemySpeed =6.9, enemyDist = Math.sin
 
 
 //Spikes
 function Spikes (pos) {
 	this.pos = pos;
-	this.size = new Vector (1,1);
+	this.size = new Vector (.01,.5);
+	this.speed = (0,0);
 }
 Spikes.prototype.type = "spikes";
+
+Spikes.prototype.act = function(step, level) {
+  var newPos = this.pos.plus(this.speed.times(step));
+  if (!level.obstacleAt(newPos, this.size))
+    this.pos = newPos;
+  else if (this.repeatPos)
+    this.pos = this.repeatPos;
+  else
+    this.speed = this.speed.times(-1);
+};
 
 
 function elt(name, className) {
@@ -383,20 +374,9 @@ Level.prototype.animate = function(step, keys) {
   }
 };
 
-//Will
-/*Actor.prototype.act = function(step, level) {
-	var newPos = this.pos.plus(this.speed.times(step));
-  if (!level.obstacleAt(newPos, this.size))
-    this.pos = newPos;
-  else if (this.repeatPos)
-    this.pos = this.repeatPos;
-  else
-    this.speed = this.speed.times(-1);
-};*/
-
 var maxStep = 0.08;
 
-var playerXSpeed = 4;
+var playerXSpeed = 3.4;
 
 Player.prototype.moveX = function(step, level, keys) {
   this.speed.x = 0;
@@ -409,13 +389,12 @@ Player.prototype.moveX = function(step, level, keys) {
 
   if (obstacle)
 	  level.playerHit(obstacle);
-  // Move if there's not a wall there.
   else
 	this.pos = newPos;
 };
 
 
-var gravity = 18;
+var gravity = 20;
 var jumpSpeed = 13;
 var playerYSpeed = 11;
 
@@ -425,17 +404,25 @@ Player.prototype.moveY = function(step, level, keys) {
   var motion = new Vector(0, this.speed.y * step);
   var newPos = this.pos.plus(motion);
   var obstacle = level.obstacleAt(newPos, this.size);
+  var otherActor = level.actorAt(this);
+  if (otherActor && otherActor.type === "horiPlat") {
+    obstacle = otherActor;
+  }
+  if (otherActor && otherActor.type === "vertPlat") {
+    obstacle = otherActor;
+  }
   // The floor is also an obstacle -- only allow players to 
   // jump if they are touching some obstacle.
   if (obstacle) {
 	  level.playerHit(obstacle);
-    if (keys.up && this.speed.y > 0)
+    if (keys.up){
       this.speed.y = -jumpSpeed;
-    else
+    }else
       this.speed.y = 0;
-  } else {
-    this.pos = newPos;
+    motion = new Vector(0, this.speed.y * step);
+    newPos = this.pos.plus(motion);
   }
+  this.pos = newPos;
 };
 
 Player.prototype.act = function(step, level, keys) {

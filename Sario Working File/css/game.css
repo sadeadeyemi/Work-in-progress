@@ -1,24 +1,57 @@
-.background    { background: rgb(52, 166, 251);
+.background    { background-image: url("pics/background.png");
+				 background-origin: padding-box;
+				 background-repeat: repeat-x;
+				 background-position: 0% 0%;
                  table-layout: fixed;
                  border-spacing: 0;
-				 height: 100%;
-				 width: 100%;
-}
-.background td { padding: 25;          }
+				 background-size: auto auto;
+				 padding:25;
+				 }
 .lava          { background: rgb(237, 31, 0); }
-.wall          { background: white;   }
-.coin		   { background: rgb(0, 0, 0); }
+.coin		   { background: url("pics/coin.png");				
+				 display:block;
+				 position:absolute;
+				 background-repeat:no-repeat;
+				 background-size: 100% 100%;
+				 width: 500px;
+				 height: 500px;
+				 float:left; 
+				 bottom:0;
+				 left:0;	
+			 }
+.wall          { background: rgb(10, 115, 21); }
+
 .horiPlat	   { background: rgb(158, 25, 145);  }
-.vertPlat      { background: rgb(100, 69, 25); }
+.vertPlat      { background:rgb ( 235, 96, 109);}
 .enemy         { background: rgb(54, 125, 89); }
-.spikes        { background: rgb(78, 225, 54); }
+.spikes        { background: url("pics/spikes.png");				
+				 display:block;
+				 position:absolute;
+				 background-size: 100% 100%;
+				 width: 18px;
+				 height: 18px;
+				 float:left; 
+				 bottom:0;
+				 left:0; }
 
 .actor	{position: absolute; }
-.player	{background: rgb(2, 181, 0); }
+.player	{background:url('pics/evilmario.png');
+		 background-position: absolute;
+		 display:block;
+		 position:absolute;
+		 background-repeat:no-repeat;
+		 background-size: 100% 100%;
+		 width:700px;
+		 height:1260px;
+		 float:left;
+		 bottom:0;
+		 left:0;
+	/*http://i68.tinypic.com/2zg6yqf.jpg*/	 
+		 }
 .game {
 	overflow: hidden;
-	max-width: 600px;
-	max-height: 600px;
+	max-width: 800px;
+	max-height: 400px;
 	
 	
   position: relative;
